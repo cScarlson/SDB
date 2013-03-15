@@ -7,7 +7,7 @@
 window.sdb = (window.sdb || (function(){
 	
 	function SDB(schema, successCallback){
-		this.req, this.db;
+		this.req, this.db, this.transaction;
 		
 		this.req = indexedDB.open(schema.db, schema.v);
 		this.req.onsuccess = function(e){
@@ -20,14 +20,20 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		this.req.onupgradeneeded = function(e){
-			
-			var stores = schema.upgrade.stores
-				, objectStore;
+			var stores = schema.upgrade.stores, objectStore;
 			for(var store in stores){
 				objectStore = e.currentTarget.result.createObjectStore(
 					stores[store].name, stores[store].opts
 				);
 				createIndices(stores[store].indices);
+				
+				/* TEST objectStore given that name
+				 * ...and email are part of the schema. */
+				var peopleData = [
+					{ name: "John Dow", email: "john@company.com" },
+					{ name: "Don Dow", email: "don@company.com" }
+				];
+				for(i in peopleData){objectStore.add(peopleData[i]);}/* END TEST */
 			}
 			
 			function createIndices(inds){
@@ -37,15 +43,6 @@ window.sdb = (window.sdb || (function(){
 					);
 				}
 			};
-			
-			/* TEST objectStore given that name
-			 * ...and email are part of the schema. */
-			var peopleData = [
-				{ name: "John Dow", email: "john@company.com" },
-				{ name: "Don Dow", email: "don@company.com" }
-			];
-			for(i in peopleData){objectStore.add(peopleData[i]);}/* END TEST */
-			
 		};
 		
 		/**
@@ -54,18 +51,54 @@ window.sdb = (window.sdb || (function(){
 		return {
 			req: this.req,
 			tr: this.trans,
-			store: this.store
+			store: this.store,
+			add: this.add,
+			put: this.put,
+			del: this.del,
+			cursor: this.cursor,
+			index: this.index
 		};
 	};
 	
 	SDB.prototype = (function(){
+		var transaction, objectStore;
 		function transaction(db, store, transactionType){
 			console.log('hit trans', db, store, IDBTransaction[transactionType]);
+			transaction = db.transaction(store, IDBTransaction[transactionType]);
+			console.log('transaction', transaction);
 			return this;
 		};
 		
-		function objectStore(){
-			console.log('fn!');
+		function objectStore(store){
+			console.log('#transaction', transaction);
+			objectStore = transaction.objectStore(store);
+			console.log('#objectStore', objectStore);
+			return this;
+		};
+		
+		function ADD(){
+			console.log('hit ADD function');
+			return this;
+		};
+		
+		function PUT(){
+			console.log('hit PUT function');
+			return this;
+		};
+		
+		function DELETE(){  // needs primary key?
+			console.log('hit DELETE function');
+			return this;
+		};
+		
+		function openCursor(){  // needs primary key?
+			console.log('hit openCursor function');
+			return this;
+		};
+		
+		function index(){  // needs primary key?
+			console.log('hit index function');
+			return this;
 		};
 		
 		/**
@@ -73,7 +106,12 @@ window.sdb = (window.sdb || (function(){
 		 */
 		return {
 			trans: transaction,
-			store: objectStore
+			store: objectStore,
+			add: ADD,
+			put: PUT,
+			del: DELETE,
+			cursor: openCursor,
+			index: index
 		};
 	}());
 	
@@ -102,8 +140,8 @@ var schema = {
 				name: 'aliens',
 				opts: {keyPath: "id", autoIncrement: true},
 				indices: [
-					{index: 'alienName', opts: {unique: false}},
-					{index: 'alienEmail', opts: {unique: true}}
+					{index: 'name', opts: {unique: false}},
+					{index: 'email', opts: {unique: true}}
 				]
 			}/*,
 			{  // add for version 2 (take out stores from v1)
@@ -120,7 +158,7 @@ var schema = {
 
 var idb = sdb.req(schema, function(db){
 	console.log('success!', db, '\n\n');
-	idb.tr(db, 'people', 'READ_WRITE').store();
+	idb.tr(db, 'people', 'READ_WRITE').store('people').add().put().del().cursor().index();
 });
 
 console.log('idb', idb, '\n\n');
