@@ -87,14 +87,15 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		function PUT(obj, callback){
-			var item, req = ((obj && objectStore.put(obj)).onsuccess = function(e){
-				item = e.target.source;
-				callback && callback(item);
-				return req;
-			}).onerror = function(e){
-				console.log('PUT ERROR!', e);
-				return req;
-			};
+			var item, req = ((obj && objectStore.put(obj))
+				.onsuccess = function(e){
+					item = e.target.source;
+					callback && callback(item);
+					return req;
+				}).onerror = function(e){
+					console.log('PUT ERROR!', e);
+					return req;
+				};
 			return this;
 		};
 		
@@ -105,14 +106,15 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		function GET(keyPath, callback){
-			var item, req = ((keyPath && objectStore.get(keyPath)).onsuccess = function(e){
-				item = e.target.source;
-				callback && callback(item);
-				return req;
-			}).onerror = function(e){
-				console.log('GET ERROR!', e);
-				return req;
-			};
+			var item, req = ((keyPath && objectStore.get(keyPath))
+				.onsuccess = function(e){
+					item = e.target.source;
+					callback && callback(item);
+					return req;
+				}).onerror = function(e){
+					console.log('GET ERROR!', e);
+					return req;
+				};
 			return this;
 		};
 		
@@ -207,6 +209,20 @@ var idb = sdb.req(schema, function(db){
 		.store('people')
 		.add()
 		.put({name: 'cody', email: 'otocarlson@gmail.com'}, function(item){
+			console.log('PUT ITEM', item);
+			})
+		.del()
+		.get('1', function(item){
+			console.log('GOT ITEM', item);	
+			})
+		.cursor()
+		.index();
+		
+	idb
+		.tr(db, ['aliens'], 'READ_WRITE')
+		.store('aliens')
+		.add()
+		.put({name: 'codius', email: 'codius@gmail.com'}, function(item){
 			console.log('PUT ITEM', item);
 			})
 		.del()

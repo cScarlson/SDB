@@ -86,9 +86,15 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function PUT(obj){
-			console.log('hit PUT function, obj', (obj && obj) || 'NO obj');
-			obj && objectStore.put(obj);
+		function PUT(obj, callback){
+			var item, req = ((obj && objectStore.put(obj)).onsuccess = function(e){
+				item = e.target.source;
+				callback && callback(item);
+				return req;
+			}).onerror = function(e){
+				console.log('PUT ERROR!', e);
+				return req;
+			};
 			return this;
 		};
 		
@@ -98,11 +104,15 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function GET(keyPath){
-			var item;
-			console.log('hit GET function, keyPath', (keyPath && keyPath) || 'NO keyPath');
-			item = (keyPath && objectStore.get(keyPath));
-			console.log('item', item);
+		function GET(keyPath, callback){
+			var item, req = ((keyPath && objectStore.get(keyPath)).onsuccess = function(e){
+				item = e.target.source;
+				callback && callback(item);
+				return req;
+			}).onerror = function(e){
+				console.log('GET ERROR!', e);
+				return req;
+			};
 			return this;
 		};
 		
@@ -196,9 +206,13 @@ var idb = sdb.req(schema, function(db){
 		.tr(db, ['people'], 'READ_WRITE')
 		.store('people')
 		.add()
-		.put()
+		.put({name: 'cody', email: 'otocarlson@gmail.com'}, function(item){
+			console.log('PUT ITEM', item);
+			})
 		.del()
-		.get('1')
+		.get('1', function(item){
+			console.log('GOT ITEM', item);	
+			})
 		.cursor()
 		.index();
 });
@@ -207,7 +221,7 @@ console.log('idb', idb, '\n\n');
 
 
 
-////
+
 
 
 
