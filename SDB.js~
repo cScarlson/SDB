@@ -97,7 +97,6 @@ window.sdb = (window.sdb || (function(){
 		
 		function GET(keyPath){
 			console.log('hit GET function, keyPath', (keyPath && keyPath) || 'NO keyPath');
-			console.log('hit GET function, keyPath', (keyPath && keyPath) || 'NO keyPath');
 			keyPath && objectStore.get(keyPath);
 			return this;
 		};

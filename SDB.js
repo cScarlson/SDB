@@ -57,7 +57,10 @@ window.sdb = (window.sdb || (function(){
 			del: this.del,
 			get: this.get,
 			cursor: this.cursor,
-			index: this.index
+			count: this.count,
+			clear: this.clear,
+			index: this.index,
+			deleteIndex: this.deleteIndex
 		};
 	};
 	
@@ -96,8 +99,10 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		function GET(keyPath){
+			var item;
 			console.log('hit GET function, keyPath', (keyPath && keyPath) || 'NO keyPath');
-			keyPath && objectStore.get(keyPath);
+			item = (keyPath && objectStore.get(keyPath));
+			console.log('item', item);
 			return this;
 		};
 		
@@ -106,8 +111,23 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
+		function count(){
+			console.log('hit count function');
+			return this;
+		};
+		
+		function CLEAR(){
+			console.log('hit CLEAR function');
+			return this;
+		};
+		
 		function index(){
 			console.log('hit index function');
+			return this;
+		};
+		
+		function deleteIndex(){
+			console.log('hit deleteIndex function');
 			return this;
 		};
 		
@@ -122,7 +142,10 @@ window.sdb = (window.sdb || (function(){
 			del: DELETE,
 			get: GET,
 			cursor: openCursor,
-			index: index
+			count: count,
+			clear: CLEAR,
+			index: index,
+			deleteIndex: deleteIndex
 		};
 	}());
 	
@@ -175,7 +198,7 @@ var idb = sdb.req(schema, function(db){
 		.add()
 		.put()
 		.del()
-		.get()
+		.get('1')
 		.cursor()
 		.index();
 });
