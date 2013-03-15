@@ -55,6 +55,7 @@ window.sdb = (window.sdb || (function(){
 			add: this.add,
 			put: this.put,
 			del: this.del,
+			get: this.get,
 			cursor: this.cursor,
 			index: this.index
 		};
@@ -76,27 +77,37 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function ADD(){
-			console.log('hit ADD function');
+		function ADD(obj){
+			console.log('hit ADD function, obj', (obj && obj) || 'NO obj');
+			obj && objectStore.add(obj);
 			return this;
 		};
 		
-		function PUT(){
-			console.log('hit PUT function');
+		function PUT(obj){
+			console.log('hit PUT function, obj', (obj && obj) || 'NO obj');
+			obj && objectStore.put(obj);
 			return this;
 		};
 		
-		function DELETE(){  // needs primary key?
-			console.log('hit DELETE function');
+		function DELETE(keyPath){
+			console.log('hit DELETE function, keyPath', (keyPath && keyPath) || 'NO keyPath');
+			keyPath && objectStore.delete(keyPath);
 			return this;
 		};
 		
-		function openCursor(){  // needs primary key?
+		function GET(keyPath){
+			console.log('hit GET function, keyPath', (keyPath && keyPath) || 'NO keyPath');
+			console.log('hit GET function, keyPath', (keyPath && keyPath) || 'NO keyPath');
+			keyPath && objectStore.get(keyPath);
+			return this;
+		};
+		
+		function openCursor(){
 			console.log('hit openCursor function');
 			return this;
 		};
 		
-		function index(){  // needs primary key?
+		function index(){
 			console.log('hit index function');
 			return this;
 		};
@@ -110,6 +121,7 @@ window.sdb = (window.sdb || (function(){
 			add: ADD,
 			put: PUT,
 			del: DELETE,
+			get: GET,
 			cursor: openCursor,
 			index: index
 		};
@@ -158,7 +170,15 @@ var schema = {
 
 var idb = sdb.req(schema, function(db){
 	console.log('success!', db, '\n\n');
-	idb.tr(db, 'people', 'READ_WRITE').store('people').add().put().del().cursor().index();
+	idb
+		.tr(db, ['people'], 'READ_WRITE')
+		.store('people')
+		.add()
+		.put()
+		.del()
+		.get()
+		.cursor()
+		.index();
 });
 
 console.log('idb', idb, '\n\n');

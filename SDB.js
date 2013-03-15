@@ -169,7 +169,15 @@ var schema = {
 
 var idb = sdb.req(schema, function(db){
 	console.log('success!', db, '\n\n');
-	idb.tr(db, ['people'], 'READ_WRITE').store('people').add().put().del().cursor().index();
+	idb
+		.tr(db, ['people'], 'READ_WRITE')
+		.store('people')
+		.add()
+		.put()
+		.del()
+		.get()
+		.cursor()
+		.index();
 });
 
 console.log('idb', idb, '\n\n');
