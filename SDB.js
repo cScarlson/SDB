@@ -89,11 +89,24 @@ window.sdb = (window.sdb || (function(){
 		function PUT(obj, callback){
 			var item, req = ((obj && objectStore.put(obj))
 				.onsuccess = function(e){
-					item = e.target.source;
+					item = e.target.result;
 					callback && callback(item);
 					return req;
 				}).onerror = function(e){
 					console.log('PUT ERROR!', e);
+					return req;
+				};
+			return this;
+		};
+		
+		function GET(keyPath, callback){
+			var item, req = ((keyPath && objectStore.get(keyPath))
+				.onsuccess = function(e){
+					item = e.target.result;
+					callback && callback(item);
+					return req;
+				}).onerror = function(e){
+					console.log('GET ERROR!', e);
 					return req;
 				};
 			return this;
@@ -105,32 +118,16 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function GET(keyPath, callback){
-			var item, req = ((keyPath && objectStore.get(keyPath))
-				.onsuccess = function(e){
-					item = e.target.source;
-					callback && callback(item);
-					return req;
-				}).onerror = function(e){
-					console.log('GET ERROR!', e);
-					return req;
-				};
-			return this;
-		};
-		
-		function openCursor(finalCB, iterativeCB){
+		function openCursor(callback){
 			var cursor, items = [], req = objectStore.openCursor();
-			console.log('hit openCursor function');
 			req.onsuccess = function(e){
 				cursor = e.target.result;
 				(cursor) && ((function(){
-					console.log('cursor.value', cursor.value);
 					items.push(cursor.value);
+					callback(cursor.value);
 					cursor.continue();
-					//iterativeCB(cursor.value);
 				})());
 			};
-			//(items.length === cursor.length) && finalCB(cursor.value);
 			return this;
 		};
 		
@@ -151,29 +148,51 @@ window.sdb = (window.sdb || (function(){
 				(storeIndex = objectStore.index(name))
 			);
 			
-			function openCursor(callback){
-				storeIndex.openCursor().onsuccess = function(e){
-					cursor = e.target.result;
-					callback(cursor.value);
-				};
-			};
-			
-			function openKeyCursor(){
-				storeIndex.openKeyCursor().onsuccess = function(e){
-					cursor = e.target.result;
-					callback(cursor.value);
-				};
-			};
-			
-			function get(key, callback){
+			function indexGET(key, callback){
 				storeIndex.get(key).onsuccess = function(e){
 					var result = e.target.result;
 					callback(result);
 				};
+				return this;
+			};
+			
+			function indexPUT(obj, callback){
+				storeIndex.put(obj).onsuccess = function(e){
+					var result = e.target.result;
+					callback(result);
+				};
+				return this;
+			};
+			
+			function openCursor(callback){
+				var cursor, items = [], req = storeIndex.openCursor();
+				req.onsuccess = function(e){
+					cursor = e.target.result;
+					(cursor) && ((function(){
+						items.push(cursor.value);
+						callback(cursor.value);
+						cursor.continue();
+					})());
+				};
+				return this;
+			};
+			
+			function openKeyCursor(callback){
+				var cursor, items = [], req = storeIndex.openCursor();
+				req.onsuccess = function(e){
+					cursor = e.target.result;
+					(cursor) && ((function(){
+						items.push(cursor.value);
+						callback(cursor.value);
+						cursor.continue();
+					})());
+				};
+				return this;
 			};
 			
 			return {
-				get: get,
+				get: indexGET,
+				put: indexPUT,
 				openCursor: openCursor,
 				openKeyCursor: openKeyCursor
 			};
@@ -244,6 +263,7 @@ var schema = {
 };
 
 var idb = sdb.req(schema, function(db){
+
 	/**/
 	console.log('success!', db, '\n\n');
 	idb
@@ -256,8 +276,7 @@ var idb = sdb.req(schema, function(db){
 		.del()
 		.get('1', function(item){
 			console.log('GOT ITEM', item);	
-			})
-		.index();
+			});
 		
 	idb
 		.tr(db, ['aliens'], 'READ_WRITE')
@@ -269,35 +288,58 @@ var idb = sdb.req(schema, function(db){
 		.del()
 		.get('1', function(item){
 			console.log('GOT ITEM', item);	
-			})
-		.index();
-	
+			});
+			
+	// store.openCursor()
 	idb.tr(db, ['people'], 'READ_WRITE')
 		.store('people')
 		.cursor(function(value){
-			console.log('cursor value:', value);
-			},
-			function(value){
-			console.log('cursor value:', value);
+			console.log('openCursor callback:: cursor value:', value);
 			});
-	
+			
+	// store.openCursor()
 	idb.tr(db, ['aliens'], 'READ_WRITE')
 		.store('aliens')
 		.cursor(function(value){
-			console.log('cursor value:', value);
-			},
-			function(value){
-			console.log('cursor value:', value);
+			console.log('openCursor callback:: cursor value:', value);
 			});
-	
+			
+	// index.get()
 	idb.tr(db, ['people'], 'READ_WRITE')
 		.store('people')
 		.index('name')
 			.get('cody', function(result){
-			console.log('result:', result);
+			console.log('index.get(), people: result:', result);
+			})
+			.openCursor(function(result){
+			console.log('index.openCursor(), people: result:', result);
+			})
+			.openKeyCursor(function(result){
+			console.log('index.openKeyCursor(), people: result:', result);
+			})
+			.put({name: 'cody2', email: 'oto2@gmail.com'}, function(item){
+			console.log('index.PUT ITEM', item);
+			});
+			
+	// index.get()
+	idb.tr(db, ['aliens'], 'READ_WRITE')
+		.store('aliens')
+		.index('name')
+			.get('codius', function(result){
+			console.log('index.get(), aliens: result:', result);
+			})
+			.openCursor(function(result){
+			console.log('index.openCursor(), aliens: result:', result);
+			})
+			.openKeyCursor(function(result){
+			console.log('index.openKeyCursor(), aliens: result:', result);
+			})
+			.put({name: 'coduis2', email: 'codius2@gmail.com'}, function(item){
+			console.log('index.PUT ITEM', item);
 			});
 	
 	/**/
+	
 });
 
 console.log('idb', idb, '\n\n');
