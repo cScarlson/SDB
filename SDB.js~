@@ -118,8 +118,19 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function openCursor(){
+		function openCursor(finalCB, iterativeCB){
+			var cursor, items = [], req = objectStore.openCursor();
 			console.log('hit openCursor function');
+			req.onsuccess = function(e){
+				cursor = e.target.result;
+				(cursor) && ((function(){
+					console.log('cursor.value', cursor.value);
+					items.push(cursor.value);
+					cursor.continue();
+					//iterativeCB(cursor.value);
+				})());
+			};
+			//(items.length === cursor.length) && finalCB(cursor.value);
 			return this;
 		};
 		
@@ -203,6 +214,7 @@ var schema = {
 };
 
 var idb = sdb.req(schema, function(db){
+	/**/
 	console.log('success!', db, '\n\n');
 	idb
 		.tr(db, ['people'], 'READ_WRITE')
@@ -215,7 +227,6 @@ var idb = sdb.req(schema, function(db){
 		.get('1', function(item){
 			console.log('GOT ITEM', item);	
 			})
-		.cursor()
 		.index();
 		
 	idb
@@ -229,8 +240,26 @@ var idb = sdb.req(schema, function(db){
 		.get('1', function(item){
 			console.log('GOT ITEM', item);	
 			})
-		.cursor()
 		.index();
+	
+	idb.tr(db, ['people'], 'READ_WRITE')
+		.store('people')
+		.cursor(function(value){
+			console.log('cursor value:', value);
+			},
+			function(value){
+			console.log('cursor value:', value);
+			});
+	
+	idb.tr(db, ['aliens'], 'READ_WRITE')
+		.store('aliens')
+		.cursor(function(value){
+			console.log('cursor value:', value);
+			},
+			function(value){
+			console.log('cursor value:', value);
+			});
+	/**/
 });
 
 console.log('idb', idb, '\n\n');

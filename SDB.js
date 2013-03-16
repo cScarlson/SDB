@@ -144,9 +144,39 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function index(){
+		function index(name){
 			console.log('hit index function');
-			return this;
+			var storeIndex, cursor;
+			(objectStore && name) && (
+				(storeIndex = objectStore.index(name))
+			);
+			
+			function openCursor(callback){
+				storeIndex.openCursor().onsuccess = function(e){
+					cursor = e.target.result;
+					callback(cursor.value);
+				};
+			};
+			
+			function openKeyCursor(){
+				storeIndex.openKeyCursor().onsuccess = function(e){
+					cursor = e.target.result;
+					callback(cursor.value);
+				};
+			};
+			
+			function get(key, callback){
+				storeIndex.get(key).onsuccess = function(e){
+					var result = e.target.result;
+					callback(result);
+				};
+			};
+			
+			return {
+				get: get,
+				openCursor: openCursor,
+				openKeyCursor: openKeyCursor
+			};
 		};
 		
 		function deleteIndex(){
@@ -259,6 +289,14 @@ var idb = sdb.req(schema, function(db){
 			function(value){
 			console.log('cursor value:', value);
 			});
+	
+	idb.tr(db, ['people'], 'READ_WRITE')
+		.store('people')
+		.index('name')
+			.get('cody', function(result){
+			console.log('result:', result);
+			});
+	
 	/**/
 });
 
