@@ -5,7 +5,18 @@ SDB
 
 This module is a vanilla-JavaScript library for manipulating the HTML5 IndexedDB API. Its main goals are simplicity and intuitiveness.
 
+#### NOTE: ####
+For ease of testing, its recommended that you use an IndexedDB-database-wiper such as "History Eraser" @ https://chrome.google.com/webstore/search-apps/history%20eraser?utm_campaign=en&utm_source=ha-en-na-us-webapp-collections-editors_picks&utm_medium=ha
+
+...Or a better one(?)
+
 ## Quick Start ##
+
+Point to SDB:
+	
+	<script src="path/to/SDB.js"></script>
+
+The javascript:
 
 	var PeopleDBschema = {
 		db: 'PeopleDB',
@@ -245,6 +256,48 @@ See METHODS section for methods and their implementations.
 
 #### req.callback() ####
 receives the requested database-object as an argument.
+
+### tr(): ###
+DETAIL COMMING SOON! :)
+
+### store(): ###
+DETAIL COMMING SOON! :)
+
+### add(): ###
+NOT YET IMPLEMENTED!!! USE PUT!
+
+### put(): ###
+DETAIL COMMING SOON! :)
+
+### del(): ###
+NOT YET IMPLEMENTED!!!
+
+### get(): ###
+DETAIL COMMING SOON! :)
+
+### cursor(): ###
+DETAIL COMMING SOON! :)
+
+### count(): ###
+NOT YET IMPLEMENTED!!!
+
+### clear(): ###
+NOT YET IMPLEMENTED!!!
+
+### index(): ###
+DETAIL COMMING SOON! :)
+
+#### index.get(): ####
+DETAIL COMMING SOON! :)
+
+#### index.openCursor(): ####
+DETAIL COMMING SOON! :)
+
+#### index.openKeyCursor(): ####
+DETAIL COMMING SOON! :)
+
+### deleteIndex(): ###
+NOT YET IMPLEMENTED!!!
 
 
 
