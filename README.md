@@ -10,6 +10,7 @@ This module is a vanilla-JavaScript library for manipulating the HTML5 IndexedDB
 
 ## Overview ##
 Hook the API:
+
 	var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 		// ALL transactions for "PeopleDB" go here!
 	});
