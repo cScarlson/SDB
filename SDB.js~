@@ -30,8 +30,14 @@ window.sdb = (window.sdb || (function(){
 				/* TEST objectStore given that name
 				 * ...and email are part of the schema. */
 				var peopleData = [
-					{ name: "John Dow", email: "john@company.com" },
-					{ name: "Don Dow", email: "don@company.com" }
+					{name: 'John Dow', email: 'john@company.com'},
+					{name: 'Don Dow', email: 'don@company.com'},
+					{name: 'versions', email: 'unique@email.com', versions: [
+							{versionName: 'myVersionName1', pubKey: 'myPubKey1'},
+							{versionName: 'myVersionName2', pubKey: 'myPubKey2'},
+							{versionName: 'myVersionName3', pubKey: 'myPubKey3'}
+						]
+					}
 				];
 				for(i in peopleData){objectStore.add(peopleData[i]);}/* END TEST */
 			}
@@ -66,7 +72,7 @@ window.sdb = (window.sdb || (function(){
 	
 	SDB.prototype = (function(){
 		var transaction, objectStore;
-		function transaction(db, store, transactionType){
+		function createTransaction(db, store, transactionType){
 			console.log('hit trans', db, store, IDBTransaction[transactionType]);
 			transaction = db.transaction(store, IDBTransaction[transactionType]);
 			console.log('transaction', transaction);
@@ -74,9 +80,7 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		function objectStore(store){
-			console.log('#transaction', transaction);
-			objectStore = transaction.objectStore(store);
-			console.log('#objectStore', objectStore);
+			(transaction) && (objectStore = transaction.objectStore(store));
 			return this;
 		};
 		
@@ -156,14 +160,6 @@ window.sdb = (window.sdb || (function(){
 				return this;
 			};
 			
-			function indexPUT(obj, callback){
-				storeIndex.put(obj).onsuccess = function(e){
-					var result = e.target.result;
-					callback(result);
-				};
-				return this;
-			};
-			
 			function openCursor(callback){
 				var cursor, items = [], req = storeIndex.openCursor();
 				req.onsuccess = function(e){
@@ -192,7 +188,6 @@ window.sdb = (window.sdb || (function(){
 			
 			return {
 				get: indexGET,
-				put: indexPUT,
 				openCursor: openCursor,
 				openKeyCursor: openKeyCursor
 			};
@@ -207,7 +202,7 @@ window.sdb = (window.sdb || (function(){
 		 * @return methods to 'this'
 		 */
 		return {
-			trans: transaction,
+			trans: createTransaction,
 			store: objectStore,
 			add: ADD,
 			put: PUT,
@@ -277,7 +272,7 @@ var idb = sdb.req(schema, function(db){
 		.get('1', function(item){
 			console.log('GOT ITEM', item);	
 			});
-		
+			
 	idb
 		.tr(db, ['aliens'], 'READ_WRITE')
 		.store('aliens')
@@ -331,6 +326,24 @@ var idb = sdb.req(schema, function(db){
 			.openKeyCursor(function(result){
 			console.log('index.openKeyCursor(), aliens: result:', result);
 			});
+			
+	idb
+		.tr(db, ['people', 'aliens'], 'READ_WRITE')
+		.store('people')
+		.put({name: 'versions', email: 'unique2@email.com', versions: [
+				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
+				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
+				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'}
+			]
+		})
+		.tr(db, ['people', 'aliens'], 'READ_WRITE')
+		.store('aliens')
+		.put({name: 'versions', email: 'unique2@email.com', versions: [
+				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
+				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
+				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'}
+			]
+		});
 	
 	/**/
 	
