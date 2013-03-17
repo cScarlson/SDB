@@ -232,7 +232,7 @@ var PeopleDBschema = {
 	upgrade: {
 		stores: [
 			{
-				name: 'people',
+				name: 'humans',
 				opts: {keyPath: 'id', autoIncrement: true},
 				indices: [
 					{index: 'name', opts: {unique: false}},
@@ -264,8 +264,8 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 	/**/
 	console.log('success!', db, '\n\n');
 	PeopleDB
-		.tr(db, ['people'], 'READ_WRITE')
-		.store('people')
+		.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans')
 		.add()
 		.put({name: 'cody', email: 'otocarlson@gmail.com'}, function(item){
 			console.log('PUT ITEM', item);
@@ -288,8 +288,8 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 			});
 			
 	// store.openCursor()
-	PeopleDB.tr(db, ['people'], 'READ_WRITE')
-		.store('people')
+	PeopleDB.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans')
 		.cursor(function(value){
 			console.log('openCursor callback:: cursor value:', value);
 			});
@@ -302,17 +302,17 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 			});
 			
 	// index.get()
-	PeopleDB.tr(db, ['people'], 'READ_WRITE')
-		.store('people')
+	PeopleDB.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans')
 		.index('name')
 			.get('cody', function(result){
-			console.log('index.get(), people: result:', result);
+			console.log('index.get(), humans: result:', result);
 			})
 			.openCursor(function(result){
-			console.log('index.openCursor(), people: result:', result);
+			console.log('index.openCursor(), humans: result:', result);
 			})
 			.openKeyCursor(function(result){
-			console.log('index.openKeyCursor(), people: result:', result);
+			console.log('index.openKeyCursor(), humans: result:', result);
 			});
 			
 	// index.get()
@@ -330,15 +330,15 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 			});
 			
 	PeopleDB
-		.tr(db, ['people', 'aliens'], 'READ_WRITE')
-		.store('people')
+		.tr(db, ['humans', 'aliens'], 'READ_WRITE')
+		.store('humans')
 		.put({name: 'versions', email: 'unique2@email.com', versions: [
 				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
 				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
 				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'}
 			]
 		})
-		.tr(db, ['people', 'aliens'], 'READ_WRITE')
+		.tr(db, ['humans', 'aliens'], 'READ_WRITE')
 		.store('aliens')
 		.put({name: 'versions', email: 'unique2@email.com', versions: [
 				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},

@@ -82,6 +82,28 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		function objectStore(store){
+			
+			/*
+			(transaction) && ((function(){
+				(
+					(transaction.constructor === String)
+					&&
+					(objectStore = transaction.objectStore(store))
+				)
+				||
+				(
+					(transaction.constructor === Array)
+					&&
+					((function(){
+						objectStore = [];
+						for(var i in transaction){
+							objectStore[i] = transaction[i].objectStore(store)
+						}
+					})())
+				);
+			})());
+			*/
+			
 			(transaction) && (objectStore = transaction.objectStore(store));
 			return this;
 		};
@@ -93,6 +115,34 @@ window.sdb = (window.sdb || (function(){
 		};
 		
 		function PUT(obj, callback){
+			
+			/*
+			var item, req;
+			if(objectStore.constructor === String){
+				req = ((obj && objectStore.put(obj))
+					.onsuccess = function(e){
+						item = e.target.result;
+						callback && callback(item);
+						return req;
+					}).onerror = function(e){
+						console.log('PUT ERROR!', e);
+						return req;
+					};
+			}else if(objectStore.constructor === Array){
+				for(var i in objectStore){
+					req = ((obj && objectStore[i].put(obj))
+						.onsuccess = function(e){
+							item = e.target.result;
+							callback && callback(item);
+							return req;
+						}).onerror = function(e){
+							console.log('PUT ERROR!', e);
+							return req;
+						};
+				}
+			}
+			*/
+			
 			var item, req = ((obj && objectStore.put(obj))
 				.onsuccess = function(e){
 					item = e.target.result;
