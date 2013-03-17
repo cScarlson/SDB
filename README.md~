@@ -106,8 +106,19 @@ Make a transaction:
 			console.log('PUT ITEM', item);
 			});
 
+This is the basic process for CRUDing the an IndexedDB.
 
+See METHODS section for methods and their implementations.
 
+## METHODS ##
+
+### req(): ###
+-opens a new or existing database
+-takes a schema-object as first argument
+-takes a callback-closure as second argument
+
+#### req.callback() ####
+receives the requested database-object as an argument.
 
 
 

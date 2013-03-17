@@ -113,9 +113,9 @@ See METHODS section for methods and their implementations.
 ## METHODS ##
 
 ### req(): ###
--opens a new or existing database
--takes a schema-object as first argument
--takes a callback-closure as second argument
+1. opens a new or existing database
+1. takes a schema-object as first argument
+1. takes a callback-closure as second argument
 
 #### req.callback() ####
 receives the requested database-object as an argument.
