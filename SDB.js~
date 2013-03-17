@@ -27,8 +27,8 @@ window.sdb = (window.sdb || (function(){
 				);
 				createIndices(stores[store].indices);
 				
-				/* TEST objectStore given that name
-				 * ...and email are part of the schema. */
+				// TEST objectStore given that name and email are part of the schema.
+				/*
 				var peopleData = [
 					{name: 'John Dow', email: 'john@company.com'},
 					{name: 'Don Dow', email: 'don@company.com'},
@@ -39,7 +39,9 @@ window.sdb = (window.sdb || (function(){
 						]
 					}
 				];
-				for(i in peopleData){objectStore.add(peopleData[i]);}/* END TEST */
+				for(i in peopleData){objectStore.add(peopleData[i]);} //END TEST
+				*/
+				
 			}
 			
 			function createIndices(inds){
@@ -224,7 +226,7 @@ window.sdb = (window.sdb || (function(){
 	
 }()));
 
-var schema = {
+var PeopleDBschema = {
 	db:'PeopleDB',
 	v: 1,
 	upgrade: {
@@ -257,11 +259,11 @@ var schema = {
 	} 
 };
 
-var idb = sdb.req(schema, function(db){
+var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 
 	/**/
 	console.log('success!', db, '\n\n');
-	idb
+	PeopleDB
 		.tr(db, ['people'], 'READ_WRITE')
 		.store('people')
 		.add()
@@ -273,7 +275,7 @@ var idb = sdb.req(schema, function(db){
 			console.log('GOT ITEM', item);	
 			});
 			
-	idb
+	PeopleDB
 		.tr(db, ['aliens'], 'READ_WRITE')
 		.store('aliens')
 		.add()
@@ -286,21 +288,21 @@ var idb = sdb.req(schema, function(db){
 			});
 			
 	// store.openCursor()
-	idb.tr(db, ['people'], 'READ_WRITE')
+	PeopleDB.tr(db, ['people'], 'READ_WRITE')
 		.store('people')
 		.cursor(function(value){
 			console.log('openCursor callback:: cursor value:', value);
 			});
 			
 	// store.openCursor()
-	idb.tr(db, ['aliens'], 'READ_WRITE')
+	PeopleDB.tr(db, ['aliens'], 'READ_WRITE')
 		.store('aliens')
 		.cursor(function(value){
 			console.log('openCursor callback:: cursor value:', value);
 			});
 			
 	// index.get()
-	idb.tr(db, ['people'], 'READ_WRITE')
+	PeopleDB.tr(db, ['people'], 'READ_WRITE')
 		.store('people')
 		.index('name')
 			.get('cody', function(result){
@@ -314,7 +316,7 @@ var idb = sdb.req(schema, function(db){
 			});
 			
 	// index.get()
-	idb.tr(db, ['aliens'], 'READ_WRITE')
+	PeopleDB.tr(db, ['aliens'], 'READ_WRITE')
 		.store('aliens')
 		.index('name')
 			.get('codius', function(result){
@@ -327,7 +329,7 @@ var idb = sdb.req(schema, function(db){
 			console.log('index.openKeyCursor(), aliens: result:', result);
 			});
 			
-	idb
+	PeopleDB
 		.tr(db, ['people', 'aliens'], 'READ_WRITE')
 		.store('people')
 		.put({name: 'versions', email: 'unique2@email.com', versions: [
@@ -349,7 +351,7 @@ var idb = sdb.req(schema, function(db){
 	
 });
 
-console.log('idb', idb, '\n\n');
+console.log('idb', PeopleDB, '\n\n');
 
 
 
