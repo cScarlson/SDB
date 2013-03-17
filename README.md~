@@ -75,7 +75,7 @@ To change your DB-Schema based upon version, use the 'v'-property of the schema-
 		} 
 	};
 
-After creating a new schema-object for this new version, it is recommended that you store previous version-schemas in a README file with a Code-Comment-Note in you code that references the README. (DB-VERSIONING GETS MESSY!!!)
+After creating a new schema-object for this new version, it is recommended that you store previous version-schemas in a README file with a Code-Comment-Note in you code that references the README. (DB-VERSIONING GETS MESSY!!!).
 
 ##### The Callback: #####
 The callback function will receive the database that was requested as an argument. You'll need this for all of your transactions.
@@ -83,6 +83,29 @@ The callback function will receive the database that was requested as an argumen
 	var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 		var db = db;
 	});
+
+After you have the database-object ('db'), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
+
+Open a transaction:
+
+	PeopleDB
+		.tr(db, ['humans'], 'READ_WRITE');
+
+Get an objectStore:
+
+	PeopleDB
+		.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans');
+
+Make a transaction:
+
+	PeopleDB
+		.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans')
+		.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
+			console.log('PUT ITEM', item);
+			});
+
 
 
 

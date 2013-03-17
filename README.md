@@ -84,7 +84,41 @@ The callback function will receive the database that was requested as an argumen
 		var db = db;
 	});
 
+After you have the database-object ('db'), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
 
+Open a transaction:
+
+	PeopleDB
+		.tr(db, ['humans'], 'READ_WRITE');
+
+Get an objectStore:
+
+	PeopleDB
+		.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans');
+
+Make a transaction:
+
+	PeopleDB
+		.tr(db, ['humans'], 'READ_WRITE')
+		.store('humans')
+		.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
+			console.log('PUT ITEM', item);
+			});
+
+This is the basic process for CRUDing the an IndexedDB.
+
+See METHODS section for methods and their implementations.
+
+## METHODS ##
+
+### req(): ###
+-opens a new or existing database
+-takes a schema-object as first argument
+-takes a callback-closure as second argument
+
+#### req.callback() ####
+receives the requested database-object as an argument.
 
 
 
