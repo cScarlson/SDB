@@ -19,7 +19,7 @@ To create or open an IndexedDB database, you need to have a schema in place. In 
 
 To request a database, use the 'req' method on the API. The 'req' method takes 2 arguments: a database schema, and a callback closure for making transactions.
 
-###### The Schema: ######
+##### The Schema: #####
 The schema is an object-literal. It must consist of a 'db' property (which is a string containing the database's name), and a version (for database verioning). On top of a db name and version, you'll need to set up your "ObjectStores" and Indices. You can add multiple ObjectStores and Indices using arrays. The following elucidates what properties are necessary.
 
 	var PeopleDBschema = {
@@ -28,7 +28,7 @@ The schema is an object-literal. It must consist of a 'db' property (which is a 
 		upgrade: {
 			stores: [
 				{
-					name: 'people',
+					name: 'humans',
 					opts: {keyPath: 'id', autoIncrement: true},
 					indices: [
 						{index: 'name', opts: {unique: false}},
@@ -36,26 +36,48 @@ The schema is an object-literal. It must consist of a 'db' property (which is a 
 					]
 				},
 				{
-					name: 'aliens',
+					name: 'aliens', // aliens are people too!
 					opts: {keyPath: 'id', autoIncrement: true},
 					indices: [
 						{index: 'name', opts: {unique: false}},
 						{index: 'email', opts: {unique: true}}
 					]
-				}/*,
-				{  // add for version 2 (take out stores from v1)
-					name: 'animals',
-					opts: {keyPath: "id", autoIncrement: true},
+				}
+			]
+		} 
+	};
+	
+###### Versioning ######
+To change your DB-Schema based upon version, use the 'v'-property of the schema-object-literal and make sure to remove any stores (schema.upgrade.stores[i]) from the previous versio(s); then add a new store with the appropriate options and indices:
+
+	var PeopleDBschema = {
+		db: 'PeopleDB',
+		v: 2,
+		upgrade: {
+			stores: [
+				{
+					name: 'cats',  // I'm a cat-lover
+					opts: {keyPath: 'id', autoIncrement: true},
 					indices: [
-						{index: 'animalName', opts: {unique: false}},
-						{index: 'animalEmail', opts: {unique: true}}
+						{index: 'name', opts: {unique: false}},
+						{index: 'email', opts: {unique: true}}
 					]
-				}*/
+				},
+				{
+					name: 'dogs',  // I'm a dog-lover
+					opts: {keyPath: 'id', autoIncrement: true},
+					indices: [
+						{index: 'name', opts: {unique: false}},
+						{index: 'email', opts: {unique: true}}
+					]
+				}
 			]
 		} 
 	};
 
-###### The Callback: ######
+After creating a new schema-object for this new version, it is recommended that you store previous version-schemas in a README file with a Code-Comment-Note in you code that references the README. (DB-VERSIONING GETS MESSY!!!)
+
+##### The Callback: #####
 The callback function will receive the database that was requested as an argument. You'll need this for all of your transactions.
 
 	var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){

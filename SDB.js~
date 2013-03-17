@@ -227,13 +227,13 @@ window.sdb = (window.sdb || (function(){
 }()));
 
 var PeopleDBschema = {
-	db:'PeopleDB',
+	db: 'PeopleDB',
 	v: 1,
 	upgrade: {
 		stores: [
 			{
 				name: 'people',
-				opts: {keyPath: "id", autoIncrement: true},
+				opts: {keyPath: 'id', autoIncrement: true},
 				indices: [
 					{index: 'name', opts: {unique: false}},
 					{index: 'email', opts: {unique: true}}
@@ -241,7 +241,7 @@ var PeopleDBschema = {
 			},
 			{
 				name: 'aliens',
-				opts: {keyPath: "id", autoIncrement: true},
+				opts: {keyPath: 'id', autoIncrement: true},
 				indices: [
 					{index: 'name', opts: {unique: false}},
 					{index: 'email', opts: {unique: true}}
@@ -249,7 +249,7 @@ var PeopleDBschema = {
 			}/*,
 			{  // add for version 2 (take out stores from v1)
 				name: 'animals',
-				opts: {keyPath: "id", autoIncrement: true},
+				opts: {keyPath: 'id', autoIncrement: true},
 				indices: [
 					{index: 'animalName', opts: {unique: false}},
 					{index: 'animalEmail', opts: {unique: true}}
