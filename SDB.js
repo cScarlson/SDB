@@ -281,79 +281,7 @@ var PeopleDBschema = {
 	} 
 };
 
-var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){
-
-	/*
-	console.log('success!', db, '\n\n');
-	PeopleDB
-		.tr(db, ['humans'], 'READ_WRITE')
-		.store('humans')
-		.add()
-		.put({name: 'cody', email: 'otocarlson@gmail.com'}, function(item){
-			console.log('PUT ITEM', item);
-			})
-		.del()
-		.get('1', function(item){
-			console.log('GOT ITEM', item);	
-			});
-			
-	PeopleDB
-		.tr(db, ['aliens'], 'READ_WRITE')
-		.store('aliens')
-		.add()
-		.put({name: 'codius', email: 'codius@gmail.com'}, function(item){
-			console.log('PUT ITEM', item);
-			})
-		.del()
-		.get('1', function(item){
-			console.log('GOT ITEM', item);	
-			});
-			
-	// store.openCursor()
-	PeopleDB.tr(db, ['humans'], 'READ_WRITE')
-		.store('humans')
-		.cursor(function(value){
-			console.log('openCursor callback:: cursor value:', value);
-			});
-			
-	// store.openCursor()
-	PeopleDB.tr(db, ['aliens'], 'READ_WRITE')
-		.store('aliens')
-		.cursor(function(value){
-			console.log('openCursor callback:: cursor value:', value);
-			});
-			
-	// index.get()
-	PeopleDB.tr(db, ['humans'], 'READ_WRITE')
-		.store('humans')
-		.index('name')
-			.get('cody', function(result){
-			console.log('index.get(), humans: result:', result);
-			})
-			.openCursor(function(result){
-			console.log('index.openCursor(), humans: result:', result);
-			})
-			.openKeyCursor(function(result){
-			console.log('index.openKeyCursor(), humans: result:', result);
-			});
-			
-	// index.get()
-	PeopleDB.tr(db, ['aliens'], 'READ_WRITE')
-		.store('aliens')
-		.index('name')
-			.get('codius', function(result){
-			console.log('index.get(), aliens: result:', result);
-			})
-			.openCursor(function(result){
-			console.log('index.openCursor(), aliens: result:', result);
-			})
-			.openKeyCursor(function(result){
-			console.log('index.openKeyCursor(), aliens: result:', result);
-			});
-	*/
-	
-	
-	
+var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
 	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 		.store('humans')
 		.put({name: 'versions', email: 'unique@email.com', versions: [
@@ -384,13 +312,9 @@ var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){
 				{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'}
 			]
 		});
-		
-	/**/
-	
 });
 
-var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){
-	
+var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 		.store('aliens')
 		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
@@ -401,10 +325,9 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){
 				{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'}
 			]
 		});
-	
 });
 
-console.log('PeopleDBHook', PeopleDBHook, '\n\n');  // 
+console.log('PeopleDBHook', PeopleDBHook, '\n\n');
 
 
 

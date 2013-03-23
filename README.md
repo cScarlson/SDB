@@ -43,8 +43,7 @@ The javascript:
 		} 
 	};
 
-	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){
-
+	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
 		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 			.store('humans')
 			.put({name: 'versions', email: 'unique@email.com', versions: [
@@ -75,11 +74,9 @@ The javascript:
 					{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'}
 				]
 			});
-	
 	});
 	
-	var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){
-	
+	var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 			.store('aliens')
 			.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
@@ -90,7 +87,6 @@ The javascript:
 					{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'}
 				]
 			});
-	
 	});
 	
 
