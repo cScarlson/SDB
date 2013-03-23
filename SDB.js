@@ -404,7 +404,7 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){
 	
 });
 
-console.log('PeopleDBHook', PeopleDBHook, '\n\n');
+console.log('PeopleDBHook', PeopleDBHook, '\n\n');  // 
 
 
 
