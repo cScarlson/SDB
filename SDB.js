@@ -11,49 +11,63 @@ window.sdb = (window.sdb || (function(){
 	function SDB(schema, successCallback){
 		this.req, this.db, this.transaction;
 		
-		this.req = indexedDB.open(schema.db, schema.v);
-		this.req.onsuccess = function(e){
-			this.db = e.target.result;
-			successCallback(this.db);
-		};
+		if(schema.constructor === Object){
 		
-		this.req.onerror = function(e){
-			console.log("IndexedDB error: " + e.target.errorCode);
-		};
-		
-		this.req.onupgradeneeded = function(e){
-			var stores = schema.upgrade.stores, objectStore;
-			for(var store in stores){
-				objectStore = e.currentTarget.result.createObjectStore(
-					stores[store].name, stores[store].opts
-				);
-				createIndices(stores[store].indices);
-				
-				// TEST objectStore given that name and email are part of the schema.
-				/*
-				var peopleData = [
-					{name: 'John Dow', email: 'john@company.com'},
-					{name: 'Don Dow', email: 'don@company.com'},
-					{name: 'versions', email: 'unique@email.com', versions: [
-							{versionName: 'myVersionName1', pubKey: 'myPubKey1'},
-							{versionName: 'myVersionName2', pubKey: 'myPubKey2'},
-							{versionName: 'myVersionName3', pubKey: 'myPubKey3'}
-						]
-					}
-				];
-				for(i in peopleData){objectStore.add(peopleData[i]);} //END TEST
-				*/
-				
-			}
-			
-			function createIndices(inds){
-				for(var ind in inds){
-					objectStore.createIndex(
-						inds[ind].index, inds[ind].index, inds[ind].opts
-					);
-				}
+			this.req = indexedDB.open(schema.db, schema.v);
+			this.req.onsuccess = function(e){
+				this.db = e.target.result;
+				successCallback(this.db);
 			};
-		};
+		
+			this.req.onerror = function(e){
+				console.log("IndexedDB error: " + e.target.errorCode);
+			};
+		
+			this.req.onupgradeneeded = function(e){
+				var stores = schema.upgrade.stores, objectStore;
+				for(var store in stores){
+					objectStore = e.currentTarget.result.createObjectStore(
+						stores[store].name, stores[store].opts
+					);
+					createIndices(stores[store].indices);
+				
+					// TEST objectStore given that name and email are part of the schema.
+					/*
+					var peopleData = [
+						{name: 'John Dow', email: 'john@company.com'},
+						{name: 'Don Dow', email: 'don@company.com'},
+						{name: 'versions', email: 'unique@email.com', versions: [
+								{versionName: 'myVersionName1', pubKey: 'myPubKey1'},
+								{versionName: 'myVersionName2', pubKey: 'myPubKey2'},
+								{versionName: 'myVersionName3', pubKey: 'myPubKey3'}
+							]
+						}
+					];
+					for(i in peopleData){objectStore.add(peopleData[i]);} //END TEST
+					*/
+				
+				}
+			
+				function createIndices(inds){
+					for(var ind in inds){
+						objectStore.createIndex(
+							inds[ind].index, inds[ind].index, inds[ind].opts
+						);
+					}
+				};
+			};
+		
+		}else if(schema.constructor === String){
+			this.req = indexedDB.open(schema);
+			this.req.onsuccess = function(e){
+				this.db = e.target.result;
+				successCallback(this.db);
+			};
+		
+			this.req.onerror = function(e){
+				console.log("IndexedDB error: " + e.target.errorCode);
+			};
+		}
 		
 		/**
 		 * @return this[methodName] to api with alias
@@ -267,7 +281,7 @@ var PeopleDBschema = {
 	} 
 };
 
-var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
+var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){
 
 	/*
 	console.log('success!', db, '\n\n');
@@ -340,8 +354,7 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 	
 	
 	
-	PeopleDB
-		.tr(db, ['humans', 'aliens'], 'READ_WRITE')
+	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 		.store('humans')
 		.put({name: 'versions', email: 'unique@email.com', versions: [
 				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'}
@@ -362,8 +375,7 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 			console.log('aliens data', data);
 		});
 	
-	PeopleDB
-		.tr(db, ['humans', 'aliens'], 'READ_WRITE')
+	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 		.store('aliens')
 		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
 				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
@@ -377,7 +389,22 @@ var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
 	
 });
 
-console.log('idb', PeopleDB, '\n\n');
+var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){
+	
+	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
+		.store('aliens')
+		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
+				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
+				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
+				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
+				{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'},
+				{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'}
+			]
+		});
+	
+});
+
+console.log('PeopleDBHook', PeopleDBHook, '\n\n');
 
 
 
