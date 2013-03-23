@@ -78,6 +78,21 @@ The javascript:
 	
 	});
 	
+	var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){
+	
+		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
+			.store('aliens')
+			.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
+					{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
+					{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
+					{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
+					{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'},
+					{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'}
+				]
+			});
+	
+	});
+	
 
 ## Overview ##
 Hook the API:

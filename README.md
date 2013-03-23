@@ -43,7 +43,7 @@ The javascript:
 		} 
 	};
 
-	var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
+	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){
 
 		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 			.store('humans')
