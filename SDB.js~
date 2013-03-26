@@ -11,18 +11,18 @@ window.sdb = (window.sdb || (function(){
 	function SDB(schema, successCallback){
 		this.req, this.db, this.transaction;
 		
-		if(schema.constructor === Object){
-		
-			this.req = indexedDB.open(schema.db, schema.v);
-			this.req.onsuccess = function(e){
-				this.db = e.target.result;
-				successCallback(this.db);
-			};
-		
-			this.req.onerror = function(e){
-				console.log("IndexedDB error: " + e.target.errorCode);
-			};
-		
+		this.req = indexedDB.open((schema.db || schema), (schema.v || !''));  // takes schema or DBnameString
+		this.req.onsuccess = function(e){
+			this.db = e.target.result;
+			successCallback(this.db);
+		};
+	
+		this.req.onerror = function(e){
+			console.log("IndexedDB error: " + e.target.errorCode);
+		};
+			
+		if(schema.constructor === Object){  // CLEAN THIS UP! - ITS REPEATATIVE!!!
+			
 			this.req.onupgradeneeded = function(e){
 				var stores = schema.upgrade.stores, objectStore;
 				for(var store in stores){
@@ -57,16 +57,6 @@ window.sdb = (window.sdb || (function(){
 				};
 			};
 		
-		}else if(schema.constructor === String){
-			this.req = indexedDB.open(schema);
-			this.req.onsuccess = function(e){
-				this.db = e.target.result;
-				successCallback(this.db);
-			};
-		
-			this.req.onerror = function(e){
-				console.log("IndexedDB error: " + e.target.errorCode);
-			};
 		}
 		
 		/**
@@ -284,7 +274,7 @@ var PeopleDBschema = {
 var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
 	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
 		.store('humans')
-		.put({name: 'versions', email: 'unique@email.com', versions: [
+		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
 				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'}
 			]
 		})
@@ -292,7 +282,7 @@ var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create databa
 			console.log('humans GOT ITEM', item);	
 		})
 		.store('aliens')
-		.put({name: 'versions', email: 'unique@email.com', versions: [
+		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
 				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'}
 			]
 		})
@@ -322,7 +312,8 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
 				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
 				{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'},
-				{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'}
+				{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'},
+				{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
 			]
 		});
 });
