@@ -283,6 +283,7 @@ receives the requested database-object as an argument.
 
 ### tr(): ###
 takes three(3) arguments:
+
 1. the database in action (passed into the req.callback closure)
 1. a string of one, or an array of multiple objectStores on which to make transactions
 1. the transaction type (read, write, etc)

@@ -264,7 +264,7 @@ Chaining transactions on multiple stores:
 					{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'},
 					{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
 				]
-			})
+			});
 	});
 
 This is the basic process for CRUDing the an IndexedDB.
