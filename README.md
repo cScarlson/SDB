@@ -289,7 +289,7 @@ takes three(3) arguments:
 1. the transaction type (read, write, etc)
 
 ### store(): ###
-the store on which the current transactions will be on. This can be any from the second argument of the tr() method.
+the store on which the current transactions will be. This can be any from the second argument of the tr() method.
 
 ### add(): ###
 once an objectStore is chosen using the .store() method, .add() can be used to insert NEW data into the database.
