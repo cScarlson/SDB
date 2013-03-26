@@ -46,7 +46,7 @@ var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create databa
 		.cursor(function(data){
 			console.log('aliens data', data);
 		});
-	
+
 	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
 		.store('aliens')
 		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [

@@ -304,7 +304,7 @@ similar to the add method, this takes data to insert into the database. However,
 NOT YET IMPLEMENTED!!!
 
 ### get(): ###
-takes two(2) arguments. An item, and a callback which accepts the item as an arguments.
+takes two(2) arguments. An item, and a callback which accepts the item as an argument.
 
 ### cursor(): ###
 takes ONE to TWO (1-2) arguments.
@@ -324,7 +324,7 @@ When using a callback and a range, the cursor will retrieve ALL items in the sto
 When using a callback and a range with exclusions, the cursor will retrieve ALL items in the store according to criteria.
 
 	.cursor(function(item){console.log(item)}, {bound: [n1, n2, true, false]});
-	Finds items in range, BUT excludes "n1" and NOT "n2".
+Finds items in range, BUT excludes "n1" (true) and NOT "n2" (false).
 	
 
 ### count(): ###
