@@ -293,11 +293,11 @@ the store on which the current transactions will be. This can be any from the se
 
 ### add(): ###
 once an objectStore is chosen using the .store() method, .add() can be used to insert NEW data into the database.
-This method takew two(2) arguments: the data to be added, and a callback.
+This method takes two(2) arguments: the data to be added, and a callback. The callback accepts an argument for which item was added.
 
 ### put(): ###
 similar to the add method, this takes data to insert into the database. However, this method is also used to update data.
-- To add NEW data, use it analogously.
+- To add NEW data, use it analogously to .add().
 - To UPDATE data, you MUST include ALL object-properties, ie include "id" etc. The entire object schema must be included and all unique properties must be unique.
 
 ### del(): ###
