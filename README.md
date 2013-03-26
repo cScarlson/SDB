@@ -111,17 +111,17 @@ The javascript:
 	
 
 ## Overview ##
-Hook the API:
+### Create A New Database: ###
 
-	var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
-		// ALL transactions for "PeopleDB" go here!
+	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
+		// ALL [INITIAL] transactions for "PeopleDB" go here!
 	});
 
 To create or open an IndexedDB database, you need to have a schema in place. In IndexedDB, you need to have a database name and a version to open/create one. (In IndexedDB, you use the same method to create a new AND open an existing database). Requesting a database will open an existing database or create a new one if it doesn't already exist.
 
 To request a database, use the 'req' method on the API. The 'req' method takes 2 arguments: a database schema, and a callback closure for making transactions.
 
-##### The Schema: #####
+#### The Schema: ####
 The schema is an object-literal. It must consist of a 'db' property (which is a string containing the database's name), and a version (for database verioning). On top of a db name and version, you'll need to set up your "ObjectStores" and Indices. You can add multiple ObjectStores and Indices using arrays. The following elucidates what properties are necessary.
 
 	var PeopleDBschema = {
@@ -138,7 +138,7 @@ The schema is an object-literal. It must consist of a 'db' property (which is a 
 					]
 				},
 				{
-					name: 'aliens', // aliens are people too!
+					name: 'aliens',
 					opts: {keyPath: 'id', autoIncrement: true},
 					indices: [
 						{index: 'name', opts: {unique: false}},
@@ -149,7 +149,7 @@ The schema is an object-literal. It must consist of a 'db' property (which is a 
 		} 
 	};
 	
-###### Versioning ######
+##### Versioning #####
 To change your DB-Schema based upon version, use the 'v'-property of the schema-object-literal and make sure to remove any stores (schema.upgrade.stores[i]) from the previous versio(s); then add a new store with the appropriate options and indices:
 
 	var PeopleDBschema = {
@@ -179,34 +179,56 @@ To change your DB-Schema based upon version, use the 'v'-property of the schema-
 
 After creating a new schema-object for this new version, it is recommended that you store previous version-schemas in a README file with a Code-Comment-Note in you code that references the README. (DB-VERSIONING GETS MESSY!!!).
 
-##### The Callback: #####
+#### The Callback: ####
 The callback function will receive the database that was requested as an argument. You'll need this for all of your transactions.
 
-	var idb = sdb, PeopleDB = idb.req(PeopleDBschema, function(db){
-		var db = db;
+	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
+		var PeopleDB = PeopleDB;
 	});
 
 After you have the database-object ('db'), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
 
 Open a transaction:
 
-	PeopleDB
-		.tr(db, ['humans'], 'READ_WRITE');
+	PeopleDBHook
+		.tr(PeopleDB, ['humans'], 'readwrite');
 
 Get an objectStore:
 
-	PeopleDB
-		.tr(db, ['humans'], 'READ_WRITE')
+	PeopleDBHook
+		.tr(PeopleDB, ['humans'], 'readwrite')
 		.store('humans');
 
 Make a transaction:
 
-	PeopleDB
-		.tr(db, ['humans'], 'READ_WRITE')
+	PeopleDBHook
+		.tr(PeopleDB, ['humans'], 'readwrite')
 		.store('humans')
 		.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
 			console.log('PUT ITEM', item);
+		});
+
+
+(Given that each transaction is encapsulated in its own closure, perhaps a more semantic way of doing this could be):
+
+	var PeopleDB = sdb.req(PeopleDBschema, function(db){  // create database from schema
+		PeopleDB
+		.tr(db, ['humans'], 'readwrite')
+		.store('humans')
+		.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
+			console.log('PUT ITEM', item);
+		});
+	});
+
+### Reopening The Database: ###
+	var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
+		PeopleDBHook
+			.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
+			.store('humans')
+			.put({id: 1, name: 'someName', email: 'uniqueName@mail.com'}, function(item){
+				console.log('PUT ITEM', item);
 			});
+	});
 
 This is the basic process for CRUDing the an IndexedDB.
 
