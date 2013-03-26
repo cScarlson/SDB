@@ -18,6 +18,31 @@ Point to SDB:
 
 The javascript:
 
+	var PeopleDBschema = {
+		db: 'PeopleDB',
+		v: 1,
+		upgrade: {
+			stores: [
+				{
+					name: 'humans',
+					opts: {keyPath: 'id', autoIncrement: true},
+					indices: [
+						{index: 'name', opts: {unique: false}},
+						{index: 'email', opts: {unique: true}}
+					]
+				},
+				{
+					name: 'aliens',
+					opts: {keyPath: 'id', autoIncrement: true},
+					indices: [
+						{index: 'name', opts: {unique: false}},
+						{index: 'email', opts: {unique: true}}
+					]
+				}
+			]
+		} 
+	};
+
 	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
 		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
 			.store('humans')
@@ -206,7 +231,7 @@ Make a transaction:
 		.store('humans')
 		.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
 			console.log('PUT ITEM', item);
-			});
+		});
 
 
 (Given that each transaction is encapsulated in its own closure, perhaps a more semantic way of doing this could be):

@@ -18,6 +18,31 @@ Point to SDB:
 
 The javascript:
 
+	var PeopleDBschema = {
+		db: 'PeopleDB',
+		v: 1,
+		upgrade: {
+			stores: [
+				{
+					name: 'humans',
+					opts: {keyPath: 'id', autoIncrement: true},
+					indices: [
+						{index: 'name', opts: {unique: false}},
+						{index: 'email', opts: {unique: true}}
+					]
+				},
+				{
+					name: 'aliens',
+					opts: {keyPath: 'id', autoIncrement: true},
+					indices: [
+						{index: 'name', opts: {unique: false}},
+						{index: 'email', opts: {unique: true}}
+					]
+				}
+			]
+		} 
+	};
+
 	var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
 		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
 			.store('humans')
@@ -107,7 +132,6 @@ The javascript:
 				console.log('@OpenCursor:', data);
 			}, {bound: [1, 4, true, true]});  // {bound: [1, 8], direction: 'next'} 2
 	});
-
 	
 
 ## Overview ##
