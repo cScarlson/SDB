@@ -210,7 +210,7 @@ The callback function will receive the database that was requested as an argumen
 		var PeopleDB = PeopleDB;
 	});
 
-After you have the database-object ('db'), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
+After you have the database-object (passed as the closure's argument), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
 
 Open a transaction:
 
@@ -270,32 +270,57 @@ See METHODS section for methods and their implementations.
 
 ### req(): ###
 1. opens a new or existing database
-1. takes a schema-object as first argument
+1. takes a schema-object or a database-name-string as first argument
 1. takes a callback-closure as second argument
 
 #### req.callback() ####
 receives the requested database-object as an argument.
 
 ### tr(): ###
-DETAIL COMMING SOON! :)
+takes three(3) arguments:
+1. the database in action (passed into the req.callback closure)
+1. a string of one, or an array of multiple objectStores on which to make transactions
+1. the transaction type (read, write, etc)
 
 ### store(): ###
-DETAIL COMMING SOON! :)
+the store on which the current transactions will be on. This can be any from the second argument of the tr() method.
 
 ### add(): ###
-NOT YET IMPLEMENTED!!! USE PUT!
+once an objectStore is chosen using the .store() method, .add() can be used to insert NEW data into the database.
+This method takew two(2) arguments: the data to be added, and a callback.
 
 ### put(): ###
-DETAIL COMMING SOON! :)
+similar to the add method, this takes data to insert into the database. However, this method is also used to update data.
+- To add NEW data, use it analogously.
+- To UPDATE data, you MUST include ALL object-properties, ie include "id" etc. The entire object schema must be included and all unique properties must be unique.
 
 ### del(): ###
 NOT YET IMPLEMENTED!!!
 
 ### get(): ###
-DETAIL COMMING SOON! :)
+takes two(2) arguments. An item, and a callback which accepts the item as an arguments.
 
 ### cursor(): ###
-DETAIL COMMING SOON! :)
+takes ONE to TWO (1-2) arguments.
+When using just a callback, the cursor will retrieve ALL items in the store.
+
+	.cursor(function(item){console.log(item)});
+	
+When using a callback and a Number, the cursor will retrieve the item in the store that matches the id (if autoinc' is set).
+
+	.cursor(function(item){console.log(item)}, 2);
+	
+When using a callback and a range, the cursor will retrieve ALL items in the store which match the range.
+
+	.cursor(function(item){console.log(item)}, {bound: [n, n], direction: 'prev'});
+'bound' takes two numbers, while direction takes a string that is either 'prev', or 'next'.
+
+When using a callback and a range with exclusions, the cursor will retrieve ALL items in the store according to criteria.
+
+	.cursor(function(item){console.log(item)}, {bound: [n1, n2, true, false]});
+	Finds items in range, BUT excludes "n1" and NOT "n2".
+	
+	
 
 ### count(): ###
 NOT YET IMPLEMENTED!!!
