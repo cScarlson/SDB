@@ -254,11 +254,16 @@ Chaining transactions on multiple stores:
 
 ### Reopening The Database: ###
 	var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
-		PeopleDBHook
-			.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
-			.store('humans')
-			.put({id: 1, name: 'someName', email: 'uniqueName@mail.com'}, function(item){
-				console.log('PUT ITEM', item);
+		PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
+			.store('aliens')
+			.put({id: 1, name: 'versions1', email: 'unique@email.com', versions: [
+					{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
+					{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
+					{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
+					{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'},
+					{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'},
+					{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
+				]
 			});
 	});
 
