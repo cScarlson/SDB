@@ -83,7 +83,8 @@ window.sdb = (window.sdb || (function(){
 		var transaction, objectStore;
 		
 		function createTransaction(db, store, transactionType){
-			transaction = db.transaction(store, IDBTransaction[transactionType]);
+			// IDBTransaction[transactionType] is deprecated
+			transaction = db.transaction(store, transactionType);
 			return this;
 		};
 		
@@ -144,16 +145,54 @@ window.sdb = (window.sdb || (function(){
 			return this;
 		};
 		
-		function openCursor(callback){
-			var cursor, items = [], req = objectStore.openCursor();
+		function openCursor(callback, directives){
+			var cursor, keyRange, direction, items = [], req;
+			
+			(!directives) && (function(){
+				req = objectStore.openCursor();
+			}())
+			||
+			(directives) && (function(){
+				(directives.constructor === Object) && (function(){
+					keyRange = (directives.bound && IDBKeyRange.bound(
+							directives.bound[0], directives.bound[1],
+							(directives.bound[2] && directives.bound[2]),
+							(directives.bound[3] && directives.bound[3])
+						));
+				
+					direction = ((directives.direction) && directives.direction);
+					((direction) && (req = objectStore.openCursor(keyRange, direction)))
+					||
+					(req = objectStore.openCursor(keyRange));
+					//req = objectStore.openCursor(IDBKeyRange.bound(1, 3, false, false));
+				}())
+				||
+				(directives.constructor === Number) && (function(){
+					keyRange = (directives && directives);
+					req = objectStore.openCursor(keyRange);
+				}());
+			}());
+			
 			req.onsuccess = function(e){
 				cursor = e.target.result;
-				(cursor) && ((function(){
+				if(cursor){
 					items.push(cursor.value);
 					callback(cursor.value);
 					cursor.continue();
-				})());
+				}
 			};
+			
+			/*  req = objectStore.openCursor();
+			req.onsuccess = function(e){
+				cursor = e.target.result;
+				(cursor) && (function(){
+					items.push(cursor.value);
+					callback(cursor.value);
+					cursor.continue();
+				}());
+			};
+			*/
+			
 			return this;
 		};
 		
@@ -186,11 +225,11 @@ window.sdb = (window.sdb || (function(){
 				var cursor, items = [], req = storeIndex.openCursor();
 				req.onsuccess = function(e){
 					cursor = e.target.result;
-					(cursor) && ((function(){
+					(cursor) && (function(){
 						items.push(cursor.value);
 						callback(cursor.value);
 						cursor.continue();
-					})());
+					}());
 				};
 				return this;
 			};
@@ -199,11 +238,11 @@ window.sdb = (window.sdb || (function(){
 				var cursor, items = [], req = storeIndex.openCursor();
 				req.onsuccess = function(e){
 					cursor = e.target.result;
-					(cursor) && ((function(){
+					(cursor) && (function(){
 						items.push(cursor.value);
 						callback(cursor.value);
 						cursor.continue();
-					})());
+					}());
 				};
 				return this;
 			};
@@ -245,81 +284,6 @@ window.sdb = (window.sdb || (function(){
 	};
 	
 }()));
-
-var PeopleDBschema = {
-	db: 'PeopleDB',
-	v: 1,
-	upgrade: {
-		stores: [
-			{
-				name: 'humans',
-				opts: {keyPath: 'id', autoIncrement: true},
-				indices: [
-					{index: 'name', opts: {unique: false}},
-					{index: 'email', opts: {unique: true}}
-				]
-			},
-			{
-				name: 'aliens',
-				opts: {keyPath: 'id', autoIncrement: true},
-				indices: [
-					{index: 'name', opts: {unique: false}},
-					{index: 'email', opts: {unique: true}}
-				]
-			}
-		]
-	} 
-};
-
-var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create database from schema
-	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
-		.store('humans')
-		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
-				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'}
-			]
-		})
-		.get('unique@email.com', function(item){
-			console.log('humans GOT ITEM', item);	
-		})
-		.store('aliens')
-		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
-				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'}
-			]
-		})
-		.get('unique@email.com', function(item){
-			console.log('aliens GOT ITEM', item);	
-		})
-		.cursor(function(data){
-			console.log('aliens data', data);
-		});
-	
-	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
-		.store('aliens')
-		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
-				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
-				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
-				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
-				{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'}
-			]
-		});
-});
-
-var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
-	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'READ_WRITE')
-		.store('aliens')
-		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
-				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
-				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
-				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
-				{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'},
-				{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'},
-				{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
-			]
-		});
-});
-
-console.log('PeopleDBHook', PeopleDBHook, '\n\n');
-
 
 
 
