@@ -232,16 +232,24 @@ Make a transaction:
 			console.log('PUT ITEM', item);
 		});
 
+Chaining transactions on multiple stores:
+
+	PeopleDBHook
+		.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
+		.store('humans')
+			.get(/* get args */)
+		.store('aliens')
+			.get(/* get args */);
 
 (Given that each transaction is encapsulated in its own closure, perhaps a more semantic way of doing this could be):
 
 	var PeopleDB = sdb.req(PeopleDBschema, function(db){  // create database from schema
 		PeopleDB
-		.tr(db, ['humans'], 'readwrite')
-		.store('humans')
-		.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
-			console.log('PUT ITEM', item);
-		});
+			.tr(db, ['humans'], 'readwrite')
+			.store('humans')
+			.put({name: 'someName', email: 'uniqueName@mail.com'}, function(item){
+				console.log('PUT ITEM', item);
+			});
 	});
 
 ### Reopening The Database: ###
