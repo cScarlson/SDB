@@ -210,7 +210,7 @@ The callback function will receive the database that was requested as an argumen
 		var PeopleDB = PeopleDB;
 	});
 
-After you have the database-object ('db'), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
+After you have the database-object (passed as the closure's argument), you can begin making transactions using the 'tr()' method (INSIDE OF THE CALLBACK CLOSURE):
 
 Open a transaction:
 
