@@ -310,38 +310,41 @@ takes two(2) arguments. An item, and a callback which accepts the item as an arg
 takes ONE to TWO (1-2) arguments.
 When using just a callback, the cursor will retrieve ALL items in the store.
 
-	.cursor(function(item, cursor){console.log(item)});
+	.cursor(function(data, cursor){console.log(data)});
 
 NOTE: the .cursor() callback accepts two(2) arguments:
 - the item retreived
-- the cursor. This allows you to control the continuance of the cursor durring process. EG.
+- the cursor. This allows you to control the continuance of the cursor during retreival process. EG.
 		
-	
-	.cursor(function(data, cursor){
-		if(data.id <= 2){
-			console.log('@OpenCursor__:', data);
-			console.log('data.id === ', data.id, 'condition is: data.id <= 2');
-			cursor.continue();
-		}else{
-			console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
-		}
-	});
-	
+		
+		.cursor(function(data, cursor){
+			if(data.id <= 2){
+				console.log('@OpenCursor__:', data);
+				console.log('data.id === ', data.id, 'condition is: data.id <= 2');
+				cursor.continue();
+			}else{
+				console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
+			}
+		});
+		
 		
 When using a callback and a Number, the cursor will retrieve the item in the store that matches the id (if autoinc' is set).
 
-	.cursor(function(item){console.log(item)}, 2);
+	.cursor(function(data, cursor){console.log(data)}, 2);
 	
 When using a callback and a range, the cursor will retrieve ALL items in the store which match the range.
 
-	.cursor(function(item){console.log(item)}, {bound: [n, n], direction: 'prev'});
+	.cursor(function(data, cursor){console.log(data)}, {bound: [n, n], direction: 'prev'});
+	
 'bound' takes two numbers, while direction takes a string that is either 'prev', or 'next'.
 
 When using a callback and a range with exclusions, the cursor will retrieve ALL items in the store according to criteria.
 
-	.cursor(function(item){console.log(item)}, {bound: [n1, n2, true, false]});
-Finds items in range, BUT excludes "n1" (true) and NOT "n2" (false).
+	.cursor(function(data, cursor){console.log(data)}, {bound: [n1, n2, true, false]});
 	
+Finds items in range, BUT excludes "n1" (true) and NOT "n2" (false).
+
+NOTE: For each of the above, you must still CONTINUE THE CURSOR if you want to keep retreiveing items!
 
 ### count(): ###
 NOT YET IMPLEMENTED!!!

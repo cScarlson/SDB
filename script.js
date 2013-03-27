@@ -106,17 +106,20 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 				console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
 			}
 		})
-		.cursor(function(data){
+		.cursor(function(data, cursor){
 			console.log('@OpenCursor 2');
 			console.log('@OpenCursor:', data);
+			cursor.continue();
 		}, 2)
-		.cursor(function(data){
+		.cursor(function(data, cursor){
 			console.log("@OpenCursor {bound: [1, 8], direction: 'prev'}");
 			console.log('@OpenCursor:', data);
+			cursor.continue();
 		}, {bound: [1, 8], direction: 'prev'})
-		.cursor(function(data){
+		.cursor(function(data, cursor){
 			console.log("@OpenCursor {bound: [x, x, boolean, boolean]}");
 			console.log('@OpenCursor:', data);
+			cursor.continue();
 		}, {bound: [1, 4, true, true]});  // {bound: [1, 8], direction: 'next'} 2
 });
 
