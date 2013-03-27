@@ -304,7 +304,7 @@ similar to the add method, this takes data to insert into the database. However,
 NOT YET IMPLEMENTED!!!
 
 ### get(): ###
-takes two(2) arguments. An item, and a callback which accepts the item as an arguments.
+takes two(2) arguments. An item, and a callback which accepts the item as an argument.
 
 ### cursor(): ###
 takes ONE to TWO (1-2) arguments.

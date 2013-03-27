@@ -97,9 +97,14 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 				{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
 			]
 		})
-		.cursor(function(data){
-			console.log('@OpenCursor _');
-			console.log('@OpenCursor:', data);
+		.cursor(function(data, cursor){
+			if(data.id <= 2){
+				console.log('@OpenCursor__:', data);
+				console.log('data.id === ', data.id, 'condition is: data.id <= 2');
+				cursor.continue();
+			}else{
+				console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
+			}
 		})
 		.cursor(function(data){
 			console.log('@OpenCursor 2');

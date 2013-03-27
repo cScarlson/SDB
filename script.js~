@@ -43,10 +43,10 @@ var PeopleDBHook = sdb.req(PeopleDBschema, function(PeopleDB){  // create databa
 		.get('unique@email.com', function(item){
 			console.log('aliens GOT ITEM', item);	
 		});
-		.cursor(function(data){
+		/*.cursor(function(data){
 			console.log('aliens data', data);
-		});
-
+		});*/
+	
 	PeopleDBHook.tr(PeopleDB, ['humans', 'aliens'], 'readwrite')
 		.store('aliens')
 		.put({id: 1, name: 'versions', email: 'unique@email.com', versions: [
@@ -88,6 +88,15 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 				{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
 			]
 		})
+		.put({id: 4, name: 'versions4', email: 'unique4@email.com', versions: [
+				{versionName: 'myOtherVersionName1', pubKey: 'myOtherPubKey1'},
+				{versionName: 'myOtherVersionName2', pubKey: 'myOtherPubKey2'},
+				{versionName: 'myOtherVersionName3', pubKey: 'myOtherPubKey3'},
+				{versionName: 'myOtherVersionName4', pubKey: 'myOtherPubKey4'},
+				{versionName: 'myOtherVersionName5', pubKey: 'myOtherPubKey5'},
+				{versionName: 'myOtherVersionName6', pubKey: 'myOtherPubKey6'}
+			]
+		})
 		.cursor(function(data){
 			console.log('@OpenCursor _');
 			console.log('@OpenCursor:', data);
@@ -101,9 +110,9 @@ var PeopleDBHook = sdb.req('PeopleDB', function(PeopleDB){  // reopen database
 			console.log('@OpenCursor:', data);
 		}, {bound: [1, 8], direction: 'prev'})
 		.cursor(function(data){
-			console.log("@OpenCursor {bound: [1, 3, true, true]}");
+			console.log("@OpenCursor {bound: [x, x, boolean, boolean]}");
 			console.log('@OpenCursor:', data);
-		}, {bound: [1, 3, true, true]});  // {bound: [1, 8], direction: 'next'} 2
+		}, {bound: [1, 4, true, true]});  // {bound: [1, 8], direction: 'next'} 2
 });
 
 console.log('PeopleDBHook', PeopleDBHook, '\n\n');

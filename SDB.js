@@ -177,8 +177,8 @@ window.sdb = (window.sdb || (function(){
 				cursor = e.target.result;
 				if(cursor){
 					items.push(cursor.value);
-					callback(cursor.value);
-					cursor.continue();
+					callback(cursor.value, cursor);
+					//cursor.continue();  // passing cursor to callback for in-process cursor-control.
 				}
 			};
 			
