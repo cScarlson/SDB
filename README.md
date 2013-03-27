@@ -315,8 +315,9 @@ When using just a callback, the cursor will retrieve ALL items in the store.
 NOTE: the .cursor() callback accepts two(2) arguments:
 - the item retreived
 - the cursor. This allows you to control the continuance of the cursor durring process. eg:
-
+	
 	...
+	
 	.cursor(function(data, cursor){
 		if(data.id <= 2){
 			console.log('@OpenCursor__:', data);
