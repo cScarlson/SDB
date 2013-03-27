@@ -315,18 +315,16 @@ When using just a callback, the cursor will retrieve ALL items in the store.
 NOTE: the .cursor() callback accepts two(2) arguments:
 - the item retreived
 - the cursor. This allows you to control the continuance of the cursor durring process. eg:
-	
-	...
-	
-	.cursor(function(data, cursor){
-		if(data.id <= 2){
-			console.log('@OpenCursor__:', data);
-			console.log('data.id === ', data.id, 'condition is: data.id <= 2');
-			cursor.continue();
-		}else{
-			console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
-		}
-	});
+		...
+		.cursor(function(data, cursor){
+			if(data.id <= 2){
+				console.log('@OpenCursor__:', data);
+				console.log('data.id === ', data.id, 'condition is: data.id <= 2');
+				cursor.continue();
+			}else{
+				console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
+			}
+		});
 	
 When using a callback and a Number, the cursor will retrieve the item in the store that matches the id (if autoinc' is set).
 
