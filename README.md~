@@ -310,7 +310,21 @@ takes two(2) arguments. An item, and a callback which accepts the item as an arg
 takes ONE to TWO (1-2) arguments.
 When using just a callback, the cursor will retrieve ALL items in the store.
 
-	.cursor(function(item){console.log(item)});
+	.cursor(function(item, cursor){console.log(item)});
+
+NOTE: the .cursor() callback accepts two(2) arguments:
+- the item retreived
+- the cursor. This allows you to control the continuance of the cursor durring process. eg:
+	...
+	.cursor(function(data, cursor){
+		if(data.id <= 2){
+			console.log('@OpenCursor__:', data);
+			console.log('data.id === ', data.id, 'condition is: data.id <= 2');
+			cursor.continue();
+		}else{
+			console.log('@OpenCursor__: cursor stopped based upon callback conditions :-) ');
+		}
+	});
 	
 When using a callback and a Number, the cursor will retrieve the item in the store that matches the id (if autoinc' is set).
 
